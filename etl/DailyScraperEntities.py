@@ -82,7 +82,7 @@ class DailyScraperEntities():
         df_productos = self.get_entity_productos(df_main_entities)
         df_departamentos = self.get_entity_departamentos(df_main_entities)
         df_categorias = self.get_entity_categorias(df_main_entities)
-        df_subcategorias = self.get_entity_categorias(df_main_entities)
+        df_subcategorias = self.get_entity_subcategorias(df_main_entities)
 
         del df_main_entities
 
