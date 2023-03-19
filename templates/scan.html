@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Escanear Recibo - Comparador de Precios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="prueba.css" />
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="hero">
+        <div class="hero-body">
+          <div class="container is-flex is-flex-direction-column is-align-items-center has-text-centered">
+            <h1 class="title">
+              Escanear Recibo
+            </h1>
+            <h2 class="subtitle">
+              Escaneá el recibo para obtener los precios de tus productos.
+            </h2>
+            <div class="camera-container">
+              <video id="video" width="640" height="480" autoplay></video>
+              <div class="canvas-container">
+                <canvas id="canvas" width="640" height="480"></canvas>
+                <button id="capture-btn" class="button is-primary is-medium has-icons is-centered">
+                  <span class="icon">
+                    <i class="fas fa-camera"></i>
+                  </span>
+                  <span>Capturar</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const captureButton = document.getElementById('capture-btn');
+      const constraints = {
+        video: true
+      };
+      
+      function handleSuccess(stream) {
+        video.srcObject = stream;
+      }
+      
+      function handleError(error) {
+        console.error('Error al acceder a la cámara.', error);
+      }
+      
+      function takePicture() {
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const image = canvas.toDataURL('image/png');
+        console.log(image); // Aquí puedes enviar la imagen a un servidor para procesarla
+      }
+      
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then(handleSuccess)
+        .catch(handleError);
+      
+      captureButton.addEventListener('click', takePicture);
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+

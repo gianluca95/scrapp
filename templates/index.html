@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Comparador de Precios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="prueba.css" />
+  </head>
+  <body>
+    <div class="navbar-brand navbar-center">
+      <a class="navbar-item" href="https://bulma.io">
+        <img src="https://bulma.io/images/bulma-logo.png" alt="Bulma logo">
+      </a>
+    </div>    
+    </nav>    
+    <div class="main-container">
+      <div class="hero">
+        <div class="hero-body">
+          <div class="container has-text-centered is-centered">
+            <h1 class="title">
+              Comparador de Precios
+            </h1>
+            <h2 class="subtitle">
+              Encontrá los precios más bajos en tus productos favoritos.
+            </h2>
+            <div class="field">
+              <label class="label">Ingresar productos a comprar:</label>
+              <div class="control">
+                <textarea class="textarea" placeholder="Ejemplo: Leche, Pan, Queso"></textarea>
+              </div>
+            </div>
+            <div class="button-container">
+              <div class="button-wrapper">
+                <a class="button is-success is-medium has-icons" href="#">
+                  <span class="icon">
+                    <i class="fas fa-search"></i>
+                  </span>
+                  <span>Buscar precios</span>
+                </a>
+              </div>
+            </div>
+            <div class="result-container">
+              <div class="columns is-multiline is-centered">
+                <div class="column is-4">
+                  <div class="card" style="margin-bottom: 20px;">
+                      <div class="card-header">
+                        <a href="#" class="card-toggle button is-fullwidth has-text-left">
+                          <div class="media-left">
+                            <figure class="image is-48x48">
+                              <img src="https://via.placeholder.com/96x96" alt="Supermarket logo">
+                            </figure>
+                          </div>
+                          <div class="media-content">
+                            <div class="content">
+                              <p>Supermercado X</p>
+                            </div>
+                          </div>
+                          <div class="media-right">
+                            <span class="icon">
+                              <i class="fas fa-plus"></i>
+                            </span>
+                          </div>
+                        </a>
+                        
+                      </div>
+                      <div class="card-content is-hidden" id="card1">
+                        <div class="media">
+                          <div class="media-content">
+                            <ul class="price-list">
+                              <li>Leche: $5</li>
+                              <li>Pan: $2</li>
+                              <li>Queso: $3</li>
+                            </ul>
+                            <p>Total: $10</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+            </div>      
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Comparador de Precios</strong> by <a href="#">Tu nombre aquí</a>.
+        </p>
+        <p>
+          Desarrollado con <i class="fas fa-heart"></i> y <a href="https://bulma.io"><strong>Bulma</strong></a>.
+        </p>
+        <div class="social-icons">
+          <a href="#">
+            <i class="fab fa-twitter fa-2x"></i>
+          </a>
+          <a href="#">
+            <i class="fab fa-facebook fa-2x"></i>
+          </a>
+          <a href="#">
+            <i class="fab fa-instagram fa-2x"></i>
+          </a>
+        </div>
+      </div>
+    </footer>  
+  </body>
+
+  <script>
+  $(document).ready(function() {
+    $('.card-toggle').click(function() {
+      $(this).toggleClass('is-active');
+      $(this).parent().next().toggleClass('is-hidden');
+    });
+  });
+</script>
+
+</html>

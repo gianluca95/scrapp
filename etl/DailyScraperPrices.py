@@ -3,6 +3,7 @@ import time
 import logging
 from datetime import datetime
 import pandas as pd
+import numpy as np
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -24,8 +25,19 @@ class DailyScraperPrices():
         self.date = datetime.now().strftime('%Y-%m-%d') if date == None else date
 
     def load_categories(self):
-        df_categorias = pd.read_csv('./data/entities/subcategorias.csv')
-        categories = df_categorias['url_subcategorias'].tolist()
+        df_categorias = pd.read_csv('./data/entities/categorias.csv')
+        df_subcategorias = pd.read_csv('./data/entities/subcategorias.csv')
+
+        df_a_scrapear = pd.merge(left=df_categorias, 
+                                 right=df_subcategorias, 
+                                 how='outer',
+                                 on='url_texto_categorias')
+        
+        df_a_scrapear['url_a_scrapear'] = np.where(~df_a_scrapear['url_subcategorias'].isna(),
+                                                    df_a_scrapear['url_subcategorias'],
+                                                    df_a_scrapear['url_categorias'])
+
+        categories = df_a_scrapear['url_a_scrapear'].tolist()
 
         logging.info('Number of categories: {}'.format(len(categories)))
 
@@ -41,32 +53,37 @@ class DailyScraperPrices():
 
         return categories_not_scrapped
 
-    def get_prices(self, driver):
+    def get_prices(self):
         categories_not_scrapped = self.load_categories()
         
         data = {key:{} for key in categories_not_scrapped}
         ignored_exceptions = (NoSuchElementException, StaleElementReferenceException)
 
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless=new")
+        options.add_argument('--blink-settings=imagesEnabled=false')
+
         for idx, category in enumerate(categories_not_scrapped):
+            driver = webdriver.Chrome(options=options)
+
             info = f'[{idx+1}/{len(categories_not_scrapped)}] {category} '
             logging.info(info)
             driver.get(category)
             
             number_of_products = 0
-            while number_of_products == 0:
-                try:
-                    footer = WebDriverWait(driver=driver, 
-                                           timeout=20,
-                                           ignored_exceptions=ignored_exceptions).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'p.text-content')))
-                    number_of_products = int(footer.text.split()[3])
-                    number_of_loaded_products = int(footer.text.split()[1])
-                    #logging.info(info + f'(loaded products={number_of_loaded_products}, total={number_of_products})')
-                    is_error = False
-                except:
-                    logging.info(info + '(ERROR: category not found)')
-                    is_error = True
-                    number_of_products = 1
-                    continue
+            try:
+                footer = WebDriverWait(driver=driver,
+                                        timeout=20,
+                                        ignored_exceptions=ignored_exceptions).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'p.text-content')))
+                number_of_products = int(footer.text.split()[3])
+                number_of_loaded_products = int(footer.text.split()[1])
+                #logging.info(info + f'(loaded products={number_of_loaded_products}, total={number_of_products})')
+                is_error = False
+            except:
+                logging.info(info + '(ERROR: category not found)')
+                is_error = True
+                number_of_products = 1
+                continue
             
             if is_error:
                 continue
@@ -97,6 +114,8 @@ class DailyScraperPrices():
                 df = self.transform_data_prices(data=data)
                 df.to_csv('./data/prices/{}_products_prices.csv'.format(self.date), index=False, encoding='utf-8')
 
+            driver.quit()
+
         return data
         
     def transform_data_prices(self, data):
@@ -116,14 +135,8 @@ class DailyScraperPrices():
         return df
         
     def run(self):
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless=new")
-        options.add_argument('--blink-settings=imagesEnabled=false')
-
-        driver = webdriver.Chrome(options=options)
-
         logging.info(f"Getting prices from website")
-        prices = self.get_prices(driver=driver)
+        prices = self.get_prices()
         df_prices = self.transform_data_prices(data=prices)
 
         logging.info(f"Saving data")
